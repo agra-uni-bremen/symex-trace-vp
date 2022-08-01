@@ -1,8 +1,15 @@
-# SymEx-VP
+# SymEx-Trace-VP
 
-A [concolic testing][wikipedia ct] framework for RISC-V embedded software with support for [SystemC][systemc website] peripherals.
+A tracing extension for the 
+[SymEx-Vp][SymEx-VP] [concolic testing][wikipedia ct] framework for RISC-V embedded software with support for [SystemC][systemc website] peripherals.
 
 ## About
+
+SymEx-Trace-VP is an extension of the existing [SymEx-VP][SymEx-VP] 
+that collects information about each executed instruction during 
+symbolic execution and outputs it in an XML based format. 
+This trace file is designed to be used as input for the symbolic execution 
+visualization tool [SymEx-3D][SymEx-3D]. 
 
 SymEx-VP focuses explicitly on testing software for constrained embedded
 devices (e.g. as used in the Internet of Things). This software often
@@ -27,10 +34,14 @@ variables are determined by negating encountered branch conditions
 (ideally) enabling exploration of all paths through the program based on
 the introduced symbolic variables.
 
-SymEx-VP is implemented on top of the existing [riscv-vp][riscv-vp github]
-codebase and integrates this existing VP with the [clover][clover github]
-concolic testing library. More details on SymEx-VP are provided in the
-[SymEx-VP paper][symex-vp paper].
+All instructions for installing, building and running the SymEx-Trace-VP are identical 
+to those of the original [SymEx-VP][SymEx-VP]. 
+
+Details about the symbolic execution visualization are 
+described in [this][SymEx-3D] repository and 
+in the [3D SymEx Visualization][3D SymEx Visualization] paper. 
+More details on SymEx-VP are provided in the
+[SymEx-VP paper][symex-vp paper]
 
 ## Features
 
@@ -40,6 +51,7 @@ concolic testing library. More details on SymEx-VP are provided in the
 * Support for generating test case files and replaying them (see `SYMEX_TESTCASE` below)
 * Integrated [GDB][gdb website] stub to ease debugging of encountered errors (`--debug-mode`)
 * Support for many embedded operating systems (e.g. [RIOT][riot website], [Zephyr][zephyr website], …)
+* **Symbolic execution trace generation, ready for use with [SymEx-3D][SymEx-3D]**
 
 ## Cloning
 
@@ -47,7 +59,7 @@ This repository makes use of submodules to include vendored dependencies.
 In order to automatically checkout these submodules clone the repository
 as follows:
 
-	$ git clone --recursive https://github.com/agra-uni-bremen/symex-vp
+	$ git clone --recursive https://github.com/agra-uni-bremen/symex-trace-vp
 
 Alternatively, if you already cloned the repository without passing the
 `--recursive` option run the following command to checkout all submodules:
@@ -129,25 +141,39 @@ prototype is achieved through memory-mapped IO with a provided
    prototype using the `SymbolicCTRL` peripheral. For example, this
    allows signaling errors from software-specific panic handlers.
 
+### Trace generation
+The SymEx-VP automatically collects information about each executed instruction for 
+all discovered paths. 
+The resulting trace is written to the standard output stream in a human readable format. 
+
+If the symbolic execution is aborted either manually or after an error, 
+it still prints the partial trace for all previous discovered paths. 
+
+This trace file is designed to be used as input for the symbolic execution 
+visualization tool [SymEx-3D][SymEx-3D]. 
+The visualization tool currently supports DWARF debug info version 4. 
+
+
+
 ## Usage Examples
 
-Usage examples which demonstrate the three aspects mentioned in the
-previous section can be found in the `./examples` subdirectory. For
-instance, the `./examples/zig-out-of-bounds` demonstrates the discovery
-of out-of-bounds array accesses using SymEx-VP. More information on
-individual example applications is available in the `README.md` file in
-the `./examples` subdirectory.
+Examples can be found in the `./examples` subdirectory. 
+The example `./examples/trace-example` contains several different program constructs
+(like recursion and branches) that are well suited to demonstrate  
+different aspects of symbolic program execution. 
 
-The provided Docker image already contains a correctly configured RISC-V
-cross toolchain. For example, to run the `assertion-failure` example
-simply execute the following command inside the container:
+Executing the example with the built `symex-vp` using
 
-	$ make -C examples/assertion-failure/ sim
+	$ ./symex-vp ./examples/trace-example/main
 
-More complex usage example, e.g. for the integration with embedded
-operating systems, are provided as part of the
-[evaluation artifacts][symex-vp artifacts] for the SymEx-VP overview
-paper.
+or the `sim` target in the Makefile results in [this][trace example] trace file. 
+
+For additional examples on how to run programs on the SymEx-VP 
+see the usage section in the original [SymEx-VP][SymEx-VP] repository. 
+
+
+
+
 
 ## Provided VPs
 
@@ -183,23 +209,15 @@ The following environment variables can be set:
 
 ## How To Cite
 
-The concepts behind SymEx-VP are further described in the following [publication][symex-vp paper]:
-
-	@inproceedings{tempel2022symex,
-		title   = {{SymEx-VP: An open source virtual prototype for OS-agnostic concolic testing of IoT firmware}},
-		journal = {Journal of Systems Architecture},
-		pages   = {102456},
-		year    = {2022},
-		issn    = {1383-7621},
-		doi     = {10.1016/j.sysarc.2022.102456},
-		author  = {Sören Tempel and Vladimir Herdt and Rolf Drechsler},
-	}
-
-The artifacts for this publication are also available on [Code Ocean][symex-vp artifacts].
+The concepts behind SymEx-Trace-VP are further described in the following [publication](tbd):
 
 ## Acknowledgements
-
 This work was supported in part by the German Federal Ministry of
+Education and Research (BMBF) within the project Scale4Edge under contract
+no. 16ME0127 and within the project VerSys under contract no. 01IW19001
+and within the project ECXL.
+
+The work on the original SymEx-VP was supported in part by the German Federal Ministry of
 Education and Research (BMBF) within the project Scale4Edge under
 contract no. 16ME0127 and within the project VerSys under contract
 no. 01IW19001.
@@ -207,8 +225,10 @@ no. 01IW19001.
 ## License
 
 The original riscv-vp code is licensed under MIT (see `LICENSE.MIT`).
-All modifications made for the integration of symbolic execution with
-riscv-vp are licensed under GPLv3+ (see `LICENSE.GPL`). Consult the
+All modifications made for the integration of symbolic execution 
+with riscv-vp and the 
+tracing extension 
+are licensed under GPLv3+ (see `LICENSE.GPL`). Consult the
 copyright headers of individual files for more information.
 
 [riscv-vp github]: https://github.com/agra-uni-bremen/riscv-vp
@@ -233,3 +253,8 @@ copyright headers of individual files for more information.
 [systemc restart]: https://github.com/accellera-official/systemc/issues/8
 [dac checkedc]: https://www.informatik.uni-bremen.de/agra/doc/konf/DAC-2021-CheckedC-Concolic-Testing.pdf
 [fdl stack]: https://www.informatik.uni-bremen.de/agra/doc/konf/FDL21_VP_Stacksize.pdf
+
+[SymEx-VP]:https://github.com/agra-uni-bremen/symex-vp
+[SymEx-3D]:https://github.com/agra-uni-bremen/symex-3d
+[3D SymEx Visualization]:tbd
+[trace example]:https://github.com/agra-uni-bremen/symex-3d/blob/main/traces/v4/example_trace.rtrace
