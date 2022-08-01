@@ -1,7 +1,7 @@
 CC := riscv32-unknown-elf-gcc
 LD := riscv32-unknown-elf-ld
 
-CFLAGS += -ggdb
+CFLAGS += -gdwarf-4
 CFLAGS += -march=rv32i -mabi=ilp32
 CFLAGS += -nostartfiles
 
