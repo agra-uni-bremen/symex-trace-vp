@@ -34,6 +34,8 @@ uint32_t runs_created_by_current_run = 0;
 
 uint32_t symbolic_run_links_to_parent[30][2];//parent id and start pc
 
+std::map<uint32_t, Branch_Info> info_on_branches;
+
 SymbolicContext::SymbolicContext(void)
 	: solver(), trace(solver), ctx(solver)
 {
