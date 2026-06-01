@@ -32,12 +32,12 @@
 #include <z3.h>
 #endif
 
+#include <clover/query_info.hpp>
 #include <iostream>
 #include <systemc>
 #include <filesystem>
 #include <systemc>
 
-#include <clover/clover.h>
 #include "symbolic_explore.h"
 #include "symbolic_context.h"
 

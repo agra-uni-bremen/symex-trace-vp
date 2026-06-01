@@ -43,30 +43,4 @@ extern SymbolicLink symbolic_run_links[20][30];
 extern uint32_t runs_created_by_current_run;
 extern uint32_t symbolic_run_links_to_parent[30][2];
 
-
-
-/**
- * This struct contains information about the queries sovled at a particular branch, such as the time needed to solve
- * the queries and their complexity. We may need this information for optimization purposes.
- */
-struct Branch_Info {
-
-	uint32_t address;
-	unsigned int num_queries = 0;
-
-	std::vector<float> query_solving_times_in_seconds;
-	std::vector<unsigned int> num_constraints;
-	std::vector<unsigned int> num_variables;
-	std::vector<unsigned int> num_nodes;
-	std::vector<unsigned int> depth;
-
-};
-
-/**
- * This map tracks the time spent solving each branch condition. The key is the address of the branch instruction. This
- * is used to identify "hot" branches that take a long time to solve, which can be useful for optimization and debugging
- * purposes.
- */
-extern std::map<uint32_t, Branch_Info> info_on_branches;
-
 #endif
