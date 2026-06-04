@@ -29,10 +29,10 @@ SymbolicContext symbolic_context = SymbolicContext();
 
 uint32_t symolic_run_id = 0;
 
-SymbolicLink symbolic_run_links[20][30]; //[run_id][branch](pc,step,hash)
+std::vector<std::vector<SymbolicLink>> symbolic_run_links; // [run_id][branch](pc, step, hash)
 uint32_t runs_created_by_current_run = 0;
 
-uint32_t symbolic_run_links_to_parent[30][2];//parent id and start pc
+// uint32_t symbolic_run_links_to_parent[30][2];//parent id and start pc
 
 SymbolicContext::SymbolicContext(void)
 	: solver(), trace(solver), ctx(solver)

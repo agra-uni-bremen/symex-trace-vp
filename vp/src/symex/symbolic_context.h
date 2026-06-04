@@ -18,6 +18,8 @@
 #ifndef RISCV_ISA_SYMBOLIC_CTX_H
 #define RISCV_ISA_SYMBOLIC_CTX_H
 
+#include <vector>
+
 #include <clover/clover.h>
 
 class SymbolicContext {
@@ -39,7 +41,7 @@ extern SymbolicContext symbolic_context;
 
 extern uint32_t symolic_run_id;
 
-extern SymbolicLink symbolic_run_links[20][30];
+extern std::vector<std::vector<SymbolicLink>> symbolic_run_links;
 extern uint32_t runs_created_by_current_run;
 extern uint32_t symbolic_run_links_to_parent[30][2];
 #endif

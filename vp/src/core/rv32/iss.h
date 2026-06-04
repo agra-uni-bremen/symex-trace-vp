@@ -301,9 +301,10 @@ struct ISS : public external_interrupt_target, public clint_interrupt_target, pu
     void track_and_trace_branch(bool cond, std::shared_ptr<clover::ConcolicValue> expr) {
         if (expr->symbolic.has_value())
             tracer.add(cond, *expr->symbolic, last_pc);
-			symbolic_run_links[symolic_run_id][runs_created_by_current_run].pc = pc;
-			symbolic_run_links[symolic_run_id][runs_created_by_current_run].step = total_num_instr;
-			symbolic_run_links[symolic_run_id][runs_created_by_current_run].hash = instruction_hash;
+			if (symolic_run_id >= symbolic_run_links.size()) {
+				symbolic_run_links.resize(symolic_run_id + 1);
+			}
+			symbolic_run_links[symolic_run_id].push_back({pc, total_num_instr, instruction_hash});
 			runs_created_by_current_run++;
 			//printf("\n\ntrack branch \n%x, %d, %d, %d\n", pc, total_num_instr,instruction_hash, runs_created_by_current_run);
     };
