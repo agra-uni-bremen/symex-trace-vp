@@ -94,7 +94,7 @@ Manual installation requires the following software to be installed:
 * A C++ compiler toolchain with C++17 support
 * [CMake][cmake website]
 * A recent version of [Z3][z3 repo] (`4.8.X` is known to work)
-* [LLVM][llvm website]
+* [LLVM version 10.0.0 - 14.0.6][llvm website]
 * [Boost][boost website]
 
 After all dependencies have been installed run:

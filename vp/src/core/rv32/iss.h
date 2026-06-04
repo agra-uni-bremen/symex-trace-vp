@@ -46,7 +46,6 @@
 #include "core/common/trap.h"
 #include "core/common/debug.h"
 #include "csr.h"
-#include "fp.h"
 #include "mem_if.h"
 #include "syscall_if.h"
 #include "symbolic_if.h"
@@ -218,7 +217,7 @@ struct ISS : public external_interrupt_target, public clint_interrupt_target, pu
 	data_memory_if *mem = nullptr;
 	syscall_emulator_if *sys = nullptr;  // optional, if provided, the iss will intercept and handle syscalls directly
 	RegFile regs;
-	FpRegs fp_regs;
+	// FpRegs fp_regs;
 	uint32_t pc = 0;
 	uint32_t last_pc = 0;
 	bool trace = false;
@@ -293,10 +292,11 @@ struct ISS : public external_interrupt_target, public clint_interrupt_target, pu
 
     std::vector<uint64_t> get_registers(void) override;
 
-    bool eval(std::shared_ptr<clover::BitVector> bv) {
-        auto q = tracer.getQuery(bv);
-        return solver.eval(q);
-    };
+	//deprecated
+    // bool eval(std::shared_ptr<clover::BitVector> bv) {
+    //     auto q = tracer.getQuery(bv);
+    //     return solver.eval(q);
+    // };
 
     void track_and_trace_branch(bool cond, std::shared_ptr<clover::ConcolicValue> expr) {
         if (expr->symbolic.has_value())
