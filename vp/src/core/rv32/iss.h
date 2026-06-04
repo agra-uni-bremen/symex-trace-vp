@@ -289,7 +289,7 @@ struct ISS : public external_interrupt_target, public clint_interrupt_target, pu
 	void sys_exit() override;
 	unsigned get_syscall_register_index() override;
 	uint64_t read_register(unsigned idx) override;
-	void write_register(unsigned idx, uint64_t value) override;
+	void write_register(unsigned idx, uint64_t value);
 
     std::vector<uint64_t> get_registers(void) override;
 
@@ -338,12 +338,14 @@ struct ISS : public external_interrupt_target, public clint_interrupt_target, pu
 		mem->atomic_unlock();
 	}
 
+#if 0
 	void fp_prepare_instr();
 	void fp_finish_instr();
 	void fp_set_dirty();
 	void fp_update_exception_flags();
 	void fp_setup_rm();
 	void fp_require_not_off();
+#endif
 
 	uint32_t get_csr_value(uint32_t addr);
 	void set_csr_value(uint32_t addr, uint32_t value);

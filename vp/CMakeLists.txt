@@ -17,18 +17,22 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
 set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR})
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+# set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+
+# if(NOT USE_SYSTEM_SYSTEMC)
+# 	find_package( SystemC REQUIRED)
+# 	include_directories( ${SystemC_INCLUDE_DIRS})
+# else()
+# 	find_library(SystemC_LIBRARIES libsystemc.a)
+# endif()
+
+# find_package( SoftFloat REQUIRED )
+# include_directories( ${SoftFloat_INCLUDE_DIRS} )
 
 find_package( Boost REQUIRED COMPONENTS iostreams program_options log)
 
-if(NOT USE_SYSTEM_SYSTEMC)
-	find_package( SystemC REQUIRED)
-	include_directories( ${SystemC_INCLUDE_DIRS})
-else()
-	find_library(SystemC_LIBRARIES libsystemc.a)
+if(USE_SYSTEM_SYSTEMC)
+	find_library(SystemC libsystemc.a)
 endif()
-
-find_package( SoftFloat REQUIRED )
-include_directories( ${SoftFloat_INCLUDE_DIRS} )
 
 subdirs(src)

@@ -152,6 +152,8 @@ void RegFile::show() {
 
 		uint32_t bvv = solver.getValue<uint32_t>(regs[i]->concrete);
 		printf("%s = (%s, %" PRIx32 ")\n", regnames[i], bvs.c_str(), bvv);
+		// uint32_t val = solver.getValue<uint32_t>(regs[i]->concrete);
+		// std::cout << regnames[i] << " = " << std::hex << val << std::dec << std::endl;
 	}
 }
 
@@ -791,7 +793,7 @@ void ISS::exec_step() {
 
 		case Opcode::BEQ: {
 			auto res = regs[RS1]->eq(regs[RS2]);
-			bool cond = eval(res->concrete);
+			bool cond = res->concrete->isTrue();
 			if (cond) {
 				pc = last_pc + instr.B_imm();
 				trap_check_pc_alignment();
@@ -805,7 +807,7 @@ void ISS::exec_step() {
 
 		case Opcode::BNE: {
 			auto res = regs[RS1]->ne(regs[RS2]);
-			bool cond = eval(res->concrete);
+			bool cond = res->concrete->isTrue();
 			if (cond) {
 				pc = last_pc + instr.B_imm();
 				trap_check_pc_alignment();
@@ -819,7 +821,7 @@ void ISS::exec_step() {
 
 		case Opcode::BLT: {
 			auto res = regs[RS1]->slt(regs[RS2]);
-			bool cond = eval(res->concrete);
+			bool cond = res->concrete->isTrue();
 			if (cond) {
 				pc = last_pc + instr.B_imm();
 				trap_check_pc_alignment();
@@ -833,7 +835,7 @@ void ISS::exec_step() {
 
 		case Opcode::BGE: {
 			auto res = regs[RS1]->sge(regs[RS2]);
-			bool cond = eval(res->concrete);
+			bool cond = res->concrete->isTrue();
 			if (cond) {
 				pc = last_pc + instr.B_imm();
 				trap_check_pc_alignment();
@@ -847,7 +849,7 @@ void ISS::exec_step() {
 
 		case Opcode::BLTU: {
 			auto res = regs[RS1]->ult(regs[RS2]);
-			bool cond = eval(res->concrete);
+			bool cond = res->concrete->isTrue();
 			if (cond) {
 				pc = last_pc + instr.B_imm();
 				trap_check_pc_alignment();
@@ -861,7 +863,7 @@ void ISS::exec_step() {
 
 		case Opcode::BGEU: {
 			auto res = regs[RS1]->uge(regs[RS2]);
-			bool cond = eval(res->concrete);
+			bool cond = res->concrete->isTrue();
 			if (cond) {
 				pc = last_pc + instr.B_imm();
 				trap_check_pc_alignment();
@@ -1066,7 +1068,7 @@ void ISS::exec_step() {
 			auto expr_min_rs2_m = expr_min->band(expr_rs2_m);
 
 			// select can not be used with expressions that may cause div-by-zero
-			bool cond_is_rs2_zero = eval(expr_zero->concrete);
+			bool cond_is_rs2_zero = expr_zero->concrete->isTrue();
 
 			if (cond_is_rs2_zero) {
 				regs.write(RD, REG_UINT32_MAX);
@@ -1085,7 +1087,7 @@ void ISS::exec_step() {
 			auto rs2 = regs[RS2];
 
 			auto expr_zero = rs2->eq(REG_ZERO);
-			bool cond_is_rs2_zero = eval(expr_zero->concrete);
+			bool cond_is_rs2_zero = expr_zero->concrete->isTrue();
 
 			if (cond_is_rs2_zero) {
 				regs.write(RD, REG_UINT32_MAX);
@@ -1107,7 +1109,7 @@ void ISS::exec_step() {
 			auto expr_rs2_m = rs2->eq(REG_UINT32_MAX);
 			auto expr_min_rs2_m = expr_min->band(expr_rs2_m);
 
-			bool cond_is_rs2_zero = eval(expr_zero->concrete);
+			bool cond_is_rs2_zero = expr_zero->concrete->isTrue();
 
 			if (cond_is_rs2_zero) {
 				regs.write(RD, rs1);
@@ -1126,7 +1128,7 @@ void ISS::exec_step() {
 			auto rs2 = regs[RS2];
 
 			auto expr_zero = rs2->eq(REG_ZERO);
-			bool cond_is_rs2_zero = eval(expr_zero->concrete);
+			bool cond_is_rs2_zero = expr_zero->concrete->isTrue();
 
 			if (cond_is_rs2_zero) {
 				regs.write(RD, rs1);
@@ -2085,7 +2087,7 @@ std::vector<uint64_t> ISS::get_registers(void) {
     return regvals;
 }
 
-
+#if 0
 void ISS::fp_finish_instr() {
 	fp_set_dirty();
 	fp_update_exception_flags();
@@ -2122,6 +2124,7 @@ void ISS::fp_require_not_off() {
 	if (csrs.mstatus.fs == FS_OFF)
 		RAISE_ILLEGAL_INSTRUCTION();
 }
+#endif
 
 void ISS::return_from_trap_handler(PrivilegeLevel return_mode) {
 	switch (return_mode) {

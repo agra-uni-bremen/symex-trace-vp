@@ -46,10 +46,12 @@
 #define TESTCASE_ENV "SYMEX_TESTCASE"
 #define TIMEBUDGET_ENV "SYMEX_TIMEBUDGET"
 #define ERR_EXIT_ENV "SYMEX_ERREXIT"
+#define DUMP_ENV "SYMEX_DUMPALL"
 
+static bool dump_all = false;
 static std::filesystem::path *testcase_path = nullptr;
-static size_t errors_found = 0;
-static size_t paths_found = 0;
+static unsigned errors_found = 0;
+static unsigned long paths_found = 0;
 
 static std::chrono::duration<double, std::milli> solver_time;
 
@@ -62,10 +64,11 @@ dump_stats(void)
 	std::cout << "Unique paths found: " << paths_found << std::endl;
 	std::cout << "Solver Time: " << stime.count() << " seconds" << std::endl;
 	// TODO: Also dump instruction branch coverage here.
-	if (errors_found > 0) {
+
+	if (errors_found > 0)
 		std::cout << "Errors found: " << errors_found << std::endl;
+	if (errors_found > 0 || dump_all)
 		std::cout << "Testcase directory: " << *testcase_path << std::endl;
-	}
 }
 
 static std::optional<std::string>
@@ -94,7 +97,8 @@ report_handler(const sc_core::sc_report& report, const sc_core::sc_actions& acti
 	auto mtype = report.get_msg_type();
 
 	if (!strcmp(mtype, "/AGRA/riscv-vp/host-error") || !testcase_path) {
-		auto path = dump_input("error" + std::to_string(++errors_found));
+		errors_found++;
+		auto path = dump_input("path" + std::to_string(paths_found + 1) + "_error");
 		if (!path.has_value())
 			return;
 
@@ -129,11 +133,12 @@ static void
 remove_testdir(void)
 {
 	assert(testcase_path != nullptr);
-	if (errors_found > 0)
-		return;
 
-	// Remove test directory if no errors were found
-	if (rmdir(testcase_path->c_str()) == -1)
+	// Remove test directory if no test cases were
+	// generated, i.e. if the directory is empty.
+	errno = 0;
+	rmdir(testcase_path->c_str());
+	if (errno && errno != EEXIST && errno != ENOTEMPTY)
 		throw std::system_error(errno, std::generic_category());
 
 	delete testcase_path;
@@ -212,6 +217,8 @@ explore_paths(int argc, char **argv)
 		std::cout << "</symex>" << std::endl;
 		++symolic_run_id;
 		runs_created_by_current_run = 0;
+		// if (dump_all && prev_error == errors_found)
+		// 	dump_input("path" + std::to_string(paths_found));
 	} while (new_path_exists);
 
 	sc_core::sc_report_handler::release();
@@ -264,6 +271,9 @@ symbolic_explore(int argc, char **argv)
 	if (testcase)
 		return run_test(testcase, argc, argv);
 	create_testdir();
+
+	// Whether to dump all generate test inputs.
+	dump_all = getenv(DUMP_ENV) && !testcase;
 
 	// Set report handler for detecting errors
 	sc_core::sc_report_handler::set_handler(report_handler);

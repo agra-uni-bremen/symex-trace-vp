@@ -4,7 +4,6 @@ add_executable(hifive-vp
         oled.cpp
         gpio.cpp
         symbolic_uart.cpp
-        symbolic_format.cpp
         gpio/gpiocommon.cpp
         gpio/gpio-server.cpp
         gpio/gpio-client.cpp
@@ -12,6 +11,6 @@ add_executable(hifive-vp
         oled/common.cpp
         ${HEADERS})
 
-target_link_libraries(hifive-vp rv32 platform-common gdb-mc ${Boost_LIBRARIES} ${SystemC_LIBRARIES} pthread)
+target_link_libraries(hifive-vp rv32 platform-common gdb-mc ${Boost_LIBRARIES} systemc pthread)
 
 INSTALL(TARGETS hifive-vp RUNTIME DESTINATION bin)

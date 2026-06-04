@@ -5,6 +5,7 @@ main
 build/
 vp/dependencies/systemc-dist/
 *.bin
+systemc-*
 *.asm
 **/nbproject/private/
 **/nbproject/Makefile-*.mk

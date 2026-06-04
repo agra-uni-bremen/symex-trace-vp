@@ -1,16 +1,13 @@
 NPROCS:=$(shell grep -c ^processor /proc/cpuinfo)
 
-vps: vp/src/core/common/gdb-mc/libgdb/mpc/mpc.c vp/src/symex/clover/README.md vp/dependencies/systemc-dist vp/dependencies/softfloat-dist vp/build/Makefile
+vps: vp/src/core/common/gdb-mc/libgdb/mpc/mpc.c vp/src/symex/clover/README.md vp/build/Makefile
 	make -C vp/build -j$(NPROCS)
 
-vp/dependencies/systemc-dist:
-	cd vp/dependencies/ && ./build_systemc_233.sh
-
-vp/dependencies/softfloat-dist:
-	cd vp/dependencies/ && ./build_softfloat.sh
-	
 vp/src/core/common/gdb-mc/libgdb/mpc/mpc.c:
 	git submodule update --init vp/src/core/common/gdb-mc/libgdb/mpc
+
+vp/src/symex/bencode/README.md:
+	git submodule update --init vp/src/symex/bencode
 
 vp/src/symex/clover/README.md:
 	git submodule update --init vp/src/symex/clover
@@ -46,13 +43,7 @@ qt-clean:
 	rm -rf env/basic/vp-display/build
 	rm -rf env/hifive/vp-breadboard/build
 
-sysc-clean:
-	rm -rf vp/dependencies/systemc*
-
-softfloat-clean:
-	rm -rf vp/dependencies/softfloat-dist
-
-clean-all: vp-clean qt-clean sysc-clean softfloat-clean
+clean-all: vp-clean qt-clean
 
 clean: vp-clean
 
