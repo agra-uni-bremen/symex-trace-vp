@@ -3,7 +3,7 @@
 	url = https://github.com/orangeduck/mpc
 [submodule "vp/src/symex/clover"]
 	path = vp/src/symex/clover
-	url = https://github.com/agra-uni-bremen/clover.git
+	url = https://github.com/JSchmechel/clover-query-info
 [submodule "vp/src/symex/bencode"]
 	path = vp/src/symex/bencode
 	url = https://github.com/jimporter/bencode.hpp
