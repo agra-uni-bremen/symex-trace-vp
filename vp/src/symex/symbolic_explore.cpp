@@ -26,6 +26,8 @@
 #include <unistd.h>
 #include <signal.h>
 
+#include <clover/query_info.hpp>
+
 /* Debug leaks with valgrind --leak-check=full --undef-value-errors=no
  * Also: Define valgrind here to prevent spurious Z3 memory leaks. */
 #ifdef VALGRIND
@@ -314,8 +316,40 @@ symbolic_explore(int argc, char **argv)
 		std::cout << "</run>" << std::endl;
 	}
 	
-
 	std::cout << "</timelines>" << std::endl;
+
+	std::cout << "<branch-info>" << std::endl;
+	for (const auto& [branch_addr, branch_info] : info_on_branches) {
+		std::cout << std::hex << "<branch addr=\"" << branch_info.address << std::dec;
+		std::cout << "\" num_queries=\"" << branch_info.num_queries;
+		
+		if (branch_info.num_queries == 0) {
+			throw "unreachable";
+		}
+
+		auto& times = branch_info.query_solving_times_in_seconds;
+		auto max_seconds = *std::max_element(times.begin(), times.end());
+		std::cout << "\" seconds=\"" << std::dec << max_seconds;
+
+		auto& num_constraints = branch_info.num_constraints;
+		auto max_constraints = *std::max_element(num_constraints.begin(), num_constraints.end());
+		std::cout << "\" constraints=\"" << std::dec << max_constraints;
+
+		auto& num_variables = branch_info.num_variables;
+		auto max_variables = *std::max_element(num_variables.begin(), num_variables.end());
+		std::cout << "\" variables=\"" << std::dec << max_variables;
+	
+		auto& num_nodes = branch_info.num_nodes;
+		auto max_nodes = *std::max_element(num_nodes.begin(), num_nodes.end());
+		std::cout << "\" nodes=\"" << std::dec << max_nodes;
+
+		auto& depth = branch_info.depth;
+		auto max_depth = *std::max_element(depth.begin(), depth.end());
+		std::cout << "\" depth=\"" << std::dec << max_depth;
+		
+		std::cout << "\"></branch>" << std::endl;
+	}
+	std::cout << "</branch-info>" << std::endl;
 
 	std::cout << "</trace>" << std::endl;
 
