@@ -57,7 +57,6 @@ void ludcmp_init( void )
 
       if ( i == j )
         make_symbolic(&ludcmp_a[i][j], sizeof(ludcmp_a[i][j]) );
-        // ludcmp_a[ i ][ j ] *= 10;
       w += ludcmp_a[ i ][ j ];
 
       if ( x )

@@ -1,5 +1,6 @@
-Symbolization: The original program has an input matrix that is initialized based on its indexes. I tried to symbolize
-a single element of the matrix, but sadly ran into path explosion.
+Symbolization: The original program has an input matrix that is initialized based on its indexes. We symbolize exactly
+one element of the matrix. The resulting symbolic execution runs into path explosion. We let it run for 2 minute and
+then terminated it artificially. (DONE)
 
 File: ludcmp.c
 Original provenience: SNU-RT benchmark suite, via Mälardalen benchmark
