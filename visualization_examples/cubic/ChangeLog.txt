@@ -1,7 +1,7 @@
 Symbolization: The original program computed the solution to several cubics. The symbolized program only computes the
-solution to one cubic. We use symbolization to initialize one of the four parameters of the cubic. Due to state space
-problems we were sadly not able to fully symbolize it. Instead we ues a symbolized variable to pick one value out of
-an existing small range.
+solution to one cubic, but the four floats making up this cubic are fully symbolized. The complex handling of floats
+leads to path explosion during the symbolic execution of the program. We let the symbolic execution run for two minutes
+and then terminated it artificially. (DONE)
 
 Original provenience: MiBench benchmark suite,
                       http://wwweb.eecs.umich.edu/mibench

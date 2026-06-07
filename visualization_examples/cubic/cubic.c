@@ -63,7 +63,10 @@ int cubic_checksum;
 void cubic_init( void )
 {
   cubic_a1 = 1.0f, cubic_b1 = -10.5f, cubic_c1 = 32.0f, cubic_d1 = -30.0f;
-  cubic_c1 = guess_symbolic_signed_float();
+  make_symbolic(&cubic_a1, sizeof(cubic_a1));
+  make_symbolic(&cubic_b1, sizeof(cubic_b1));
+  make_symbolic(&cubic_c1, sizeof(cubic_c1));
+  make_symbolic(&cubic_d1, sizeof(cubic_d1));
   cubic_a2 = 1.0f, cubic_b2 = -4.5f, cubic_c2 = 17.0f, cubic_d2 = -30.0f;
   cubic_a3 = 1.0f, cubic_b3 = -3.5f, cubic_c3 = 22.0f, cubic_d3 = -31.0f;
   cubic_a4 = 1.0f, cubic_b4 = -13.7f, cubic_c4 = 1.0f, cubic_d4 = -35.0f;
@@ -93,7 +96,6 @@ void _Pragma( "entrypoint" ) cubic_main( void )
 {
   /* solve some cubic functions */
   cubic_solveCubic( cubic_a1, cubic_b1, cubic_c1, cubic_d1, &cubic_solutions, cubic_x );
-  cubic_checksum += cubic_solutions;
 }
 
 
