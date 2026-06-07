@@ -37,7 +37,7 @@ float guess_symbolic_signed_float() {
   };
   size_t num_elements = sizeof(array) / sizeof(array[0]);
   size_t index;
-  make_symbolic(&index, sizeof(index));
+  make_symbolic((void*) &index, sizeof(index));
   index = index % num_elements;
   for (size_t i = 0; i < num_elements; i++) {
 	if (index == i) {

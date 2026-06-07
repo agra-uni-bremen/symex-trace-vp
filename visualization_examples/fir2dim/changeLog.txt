@@ -1,6 +1,6 @@
 Symbolization: The original algorithm initialized the input values with the help of a bitmask. Interestingly,
 symbolizing this bitmaks does not lead to any branches. Apparently, the input values do not influence any branching
-decisions. To at least see something, I let the symbolic execution guess one of four hardcoded bitmasks.
+decisions. (DONE)
 
 File: fir2dim.c
 Original provenience: DSP-Stone, 

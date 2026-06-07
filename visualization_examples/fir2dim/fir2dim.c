@@ -61,7 +61,8 @@ void fir2dim_init()
 {
   unsigned int i;
   unsigned char *p;
-  volatile char bitmask = guess_char();
+  volatile char bitmask = 0;
+  make_symbolic((void*) &bitmask, sizeof(bitmask));
 
   /*
     Apply volatile XOR-bitmask to entire input array.
