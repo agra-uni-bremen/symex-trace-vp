@@ -80,7 +80,7 @@ void _Pragma( "entrypoint" ) filterbank_main( void )
   _Pragma( "loopbound min 256 max 256" )
   for ( i = 0; i < 256; i++ ) {
     if (i == 256 / 2) {
-      r[i] = guess_symbolic_unsigned_float();
+      make_symbolic(&r[ i ], sizeof(r[ i ]));
     } else {
       r[i] = i + 1;
     }

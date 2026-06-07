@@ -1,5 +1,9 @@
-Symbolization: I was not able to find a sensible symbolization for this function. The problem is that the input is too
-large and cannot be easily decreased in size (at least I don't know how).
+Symbolization: I was not able to find a sensible symbolization for this function. The problem is that a single path
+through the program takes too long. After letting the symbolic execution run for two minutes, it was not even finished
+with the first path. In other examples, I was able to avoid this issue by decreasing the size of the input. But in
+the current example, there is no obvious way to decrease the size of the input. Sadly, our symbolic execution is written
+in such a way that we only get the required information about a path after the simulation of the path has been finished.
+For the current program we therefore don't have anything. (FAILED)
 
 File: filterbank.c
 Original provenience: unknown 
