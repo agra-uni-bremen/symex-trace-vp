@@ -1,0 +1,138 @@
+/*
+
+  This program is part of the TACLeBench benchmark suite.
+  Version V 2.0
+
+  Name: complex_updates
+
+  Author: Juan Martinez Velarde
+
+  Function: complex_updates is a program for filter benchmarking.
+    This program performs n complex updates of the form
+              D(i) = C(i) + A(i)*B(i),
+    where A(i), B(i), C(i) and D(i) are complex numbers,
+    and i = 1,...,N
+             A(i) = Ar(i) + j Ai(i)
+             B(i) = Br(i) + j Bi(i)
+             C(i) = Cr(i) + j Ci(i)
+             D(i) = C(i) + A(i)*B(i) =   Dr(i)  +  j Di(i)
+                         =>  Dr(i) = Cr(i) + Ar(i)*Br(i) - Ai(i)*Bi(i)
+                         =>  Di(i) = Ci(i) + Ar(i)*Bi(i) + Ai(i)*Br(i)
+
+  Source: DSP-Stone
+    http://www.ice.rwth-aachen.de/research/tools-projects/entry/detail/dspstone/
+
+  Original name: n_complex_updates_float
+
+  Changes: no major functional changes
+
+  License: may be used, modified, and re-distributed freely
+
+*/
+
+#include "symex.h"
+
+#define N 16
+
+
+/*
+  Forward declaration of functions
+*/
+
+void complex_updates_pin_down( int *pa, int *pb, int *pc, int *pd );
+void complex_updates_init( void );
+void complex_updates_main( void );
+int main( void );
+
+
+/*
+  Declaration of global variables
+*/
+
+// Changed float values to int because the solver takes too long for floats.
+int complex_updates_A[ 2 * N ], complex_updates_B[ 2 * N ],
+      complex_updates_C[ 2 * N ], complex_updates_D[ 2 * N ];
+
+
+/*
+  Initialization- and return-value-related functions
+*/
+
+void complex_updates_init( void )
+{
+  int i;
+  volatile int x = 0;
+
+  complex_updates_pin_down( &complex_updates_A[ 0 ], &complex_updates_B[ 0 ],
+                            &complex_updates_C[ 0 ], &complex_updates_D[ 0 ] );
+
+  /* avoid constant propagation */
+  _Pragma( "loopbound min 16 max 16" )
+  for ( i = 0 ; i < N ; i++ ) {
+    complex_updates_A[ i ] += x;
+    complex_updates_B[ i ] += x;
+    complex_updates_C[ i ] += x;
+    complex_updates_D[ i ] += x;
+  }
+}
+
+
+void complex_updates_pin_down( int *pa, int *pb, int *pc, int *pd )
+{
+  register int i;
+
+  _Pragma( "loopbound min 16 max 16" )
+  for ( i = 0; i < N; i++ ) {
+    make_symbolic(&pa[0], sizeof(pa[0]));
+    make_symbolic(&pa[1], sizeof(pa[1]));
+    make_symbolic(&pb[0], sizeof(pb[0]));
+    make_symbolic(&pb[1], sizeof(pb[1]));
+    make_symbolic(&pc[0], sizeof(pc[0]));
+    make_symbolic(&pc[1], sizeof(pc[1]));
+    make_symbolic(&pd[0], sizeof(pd[0]));
+    make_symbolic(&pd[1], sizeof(pd[1]));
+  }
+}
+
+
+int complex_updates_return( void )
+{
+  int check_sum = 0;
+  int i;
+
+  _Pragma( "loopbound min 16 max 16" )
+  for ( i = 0; i < N; i++ )
+    check_sum += complex_updates_D[ i ];
+
+  return ( check_sum != 144 );
+}
+
+
+/*
+  Main functions
+*/
+
+void _Pragma( "entrypoint" ) complex_updates_main( void )
+{
+  register int *p_a = &complex_updates_A[ 0 ], *p_b = &complex_updates_B[ 0 ];
+  register int *p_c = &complex_updates_C[ 0 ], *p_d = &complex_updates_D[ 0 ];
+  int i;
+
+  _Pragma( "loopbound min 16 max 16" )
+  for ( i = 0 ; i < N ; i++, p_a++ ) {
+    *p_d    = *p_c++ + *p_a++ * *p_b++ ;
+    *p_d++ -=          *p_a   * *p_b-- ;
+
+    *p_d    = *p_c++ + *p_a-- * *p_b++ ;
+    *p_d++ +=          *p_a++ * *p_b++ ;
+  }
+
+}
+
+int main( void )
+{
+  complex_updates_init();
+  complex_updates_main();
+  complex_updates_return(); // Discard result because we require symex_exit() to be called.
+  symex_exit();
+}
