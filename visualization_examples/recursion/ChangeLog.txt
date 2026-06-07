@@ -1,0 +1,20 @@
+Symbolization: The original program recursively computes Fibonacci for a given input. We symbolize the input but
+restrict this symbol to very small bounds (i.e. 0 to 6).
+
+File: recursion.c
+Original provenience: Mälardalen benchmark suite, www.mrtc.....
+
+2017-04-18:
+- Annotated recursion_main as entry-point for timing analysis
+
+2015-10-12:
+- Remove comment on line 1
+- Added generic TACLeBench header to line 1
+- Renamed function fib to recursion_fib
+- Added forward decleration of functions
+- Added recursion_main, recursion_init, recursion_return function
+- create input value for recursion_fib function
+- Applied Code Style 
+- Added checksum in return function
+- Made input value volatile
+
