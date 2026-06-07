@@ -1,5 +1,4 @@
-Symbolization: I decreased the size of the input matrices. The matrices are initialized using a constant. I tried to
-symbolize the constant but ran into path explosion.
+Symbolization: We decreased the size of the input matrices. We symbolized a single entry within the first matrix. (DONE)
 
 File: matrix1.c
 Original provenience: DSP-Stone benchmark suite, matrix1_fixed
