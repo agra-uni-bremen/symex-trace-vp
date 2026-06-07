@@ -1,5 +1,5 @@
 Symbolization: The main function contains a loop from i = 0 to i = MAX_N. In each iteration we compute fac(i). The 
-symbolization guesses the number of loop iterations but does not exceed MAX_N.
+symbolization guesses the number of loop iterations but does not exceed MAX_N. (DONE)
 
 File: fac.c
 Original provenience: MDH WCET BENCHMARK SUITE
