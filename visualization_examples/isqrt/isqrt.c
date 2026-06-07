@@ -137,7 +137,7 @@ void isqrt_usqrt( unsigned long x, struct int_sqrt *q )
 
 void _Pragma( "entrypoint" ) isqrt_main( void )
 {
-  int i = 2;
+  int i = 4;
   struct int_sqrt j = {0, 0};
   make_symbolic(&i, sizeof(i));
   if (i != 2) {

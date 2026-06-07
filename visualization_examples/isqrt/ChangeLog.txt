@@ -1,7 +1,8 @@
 Symbolization: This one is a bit bizarre and a good candidate for debugging the underlying VP. Whenever I run it on
 symbolic input, this program gets stuck on a specific constraint. Even in situations where the symbolic value is
 constrained to exactly one concrete value. In this context, constant propagation should solve the constraint
-immediately, but it doesn't and I don't know why.
+immediately, but it doesn't and I don't know why. For the time being, I have use a symbolic input that is constrained
+to exactly 4. (DONE/FAILED)
 
 Original provenience: MiBench benchmark suite,
                       http://wwweb.eecs.umich.edu/mibench
