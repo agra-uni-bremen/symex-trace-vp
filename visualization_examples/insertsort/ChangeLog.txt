@@ -1,4 +1,5 @@
-Symbolization: I reduced the size of the input vector slightly. I symbolized one of the input values.
+Symbolization: I reduced the size of the input vector slightly from 11 to 8. I symbolized one of the input values.
+(DONE)
 
 - Added general TACLeBench header to beginning of source code
 - Removed #ifdef DEBUG till #endif
