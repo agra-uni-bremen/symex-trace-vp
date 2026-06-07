@@ -1,5 +1,6 @@
 Symbolization: The original programs computes its initial values using a bitmask. Symbolizing this bitmask leads to 
-state explosion. I therefore used symbolic execution to pick one of four hard coded bitmasks.
+path explosion and (apparently) very complicated path constraints. We let the symbolic execution run for 2 minutes
+and artificially terminated it using a timeout. (DONE)
 
 File: iir.c
 Original provenience: DSPstone benchmark suite (floating point),

@@ -77,8 +77,8 @@ void iir_init( void )
   int f;
   unsigned int i;
   unsigned char *p;
-  volatile char bitmask = guess_char();
-
+  volatile char bitmask = 0;
+  make_symbolic((void*) &bitmask, sizeof(bitmask));
 
   _Pragma( "loopbound min 20 max 20" )
   for ( f = 0 ; f < 5 * 4; f++ )
