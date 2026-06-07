@@ -76,7 +76,7 @@ double lms_sinus( int i )
 void lms_init( void )
 {
   unsigned long seed = 1;
-  make_symbolic(&seed, sizeof(seed) );
+  make_symbolic((void*) &seed, sizeof(seed));
   int k;
 
   lms_input[ 0 ] = 0.0;
