@@ -1,5 +1,5 @@
 Symbolization: The original program initialized a matrix and then computed the number of negative and positive entries
-in this matrix. We reduced the size of the matrix and made a single entry in the matrix symbolic.
+in this matrix. We reduced the size of the matrix and made three entries in the matrix fully symbolic. (DONE)
 
 File: countnegative.c
 Original provenience: Mälardalen benchmark suite, www.mrtc.....

@@ -79,8 +79,10 @@ void countnegative_initialize( matrix Array )
   for ( OuterIndex = 0; OuterIndex < MAXSIZE; OuterIndex++ )
     _Pragma( "loopbound min 20 max 20" )
     for ( InnerIndex = 0; InnerIndex < MAXSIZE; InnerIndex++ )
-      // We symbolize only one array element.
-      if (OuterIndex == MAXSIZE / 2 && InnerIndex == MAXSIZE / 2) {
+      // We symbolize three array elements.
+      if ((OuterIndex == MAXSIZE / 2 && InnerIndex == MAXSIZE / 2) ||
+          (OuterIndex == MAXSIZE / 2 && InnerIndex == MAXSIZE / 2 - 1) ||
+          (OuterIndex == MAXSIZE / 2 && InnerIndex == MAXSIZE / 2 + 1)) {
         make_symbolic(&Array[OuterIndex][InnerIndex], sizeof(Array[OuterIndex][InnerIndex]));
       } else {
         Array[ OuterIndex ][ InnerIndex ] =  countnegative_randomInteger();
