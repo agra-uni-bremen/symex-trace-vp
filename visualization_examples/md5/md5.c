@@ -24,10 +24,10 @@
 // Description: This is the MD5 algorithm comming form the Diffie-Hellman
 // application in the Netbench benchmark suite
 
-#define RANDOM_BYTES_NEEDED 256
+#define RANDOM_BYTES_NEEDED 16
 
 // Here, it can be defined how many keys should be exchanged
-#define EXCHANGEKEYS 10
+#define EXCHANGEKEYS 1
 ////////////////////////// md5c.c /////////////////////
 /* MD5C.C - RSA Data Security, Inc., MD5 message-digest algorithm
 */
@@ -569,7 +569,7 @@ int md5_R_RandomUpdate ( R_RANDOM_STRUCT *randomStruct, unsigned char *block,
 void md5_InitRandomStruct ( R_RANDOM_STRUCT *randomStruct )
 {
   static unsigned char seedByte = 0;
-  make_symbolic((void*) &seedByte, sizeof(seedByte) );
+  make_symbolic((void*) &seedByte, sizeof(seedByte));
   unsigned int bytesNeeded;
 
   md5_R_RandomInit ( randomStruct );

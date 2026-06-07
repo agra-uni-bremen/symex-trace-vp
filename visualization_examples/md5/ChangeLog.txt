@@ -1,5 +1,7 @@
-Symbolization: The original program generates input using a seed. I tried to symbolize this seed, but this lead to too
-long paths and path explosion.
+Symbolization: The original program uses a seed to intialize its input. The symbolic execution symbolizes this seed.
+Interestingly, the symbolic execution only finds one path through the program. Apparently, the program does not have
+a branch that depends on its input values. To keep the execution feasable, we had to reduce the number of keys being
+exchanged and the number of bytes requied during each key exchange. (DONE)
 
 File: md5.c
 Original provenience: RSA Data Security, Inc.
