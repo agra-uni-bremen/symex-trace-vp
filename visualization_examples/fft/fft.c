@@ -292,11 +292,7 @@ void fft_init( void )
   /* avoid constant propagation of input values */
   _Pragma( "loopbound min 2046 max 2046" ) 
   for ( i = 0; i < 2 * ( N_FFT - 1 ); i++ ) {
-    if (i == N_FFT / 2) {
-      fft_input_data[i] = guess_symbolic_signed_float();
-    } else  {
-      fft_input_data[ i ] += x;
-    }
+    make_symbolic(&fft_input_data[ i ], sizeof(fft_input_data[ i ]));
     fft_twidtable[ i ] += x;
   }
   _Pragma( "loopbound min 2 max 2" )

@@ -1,6 +1,7 @@
 Symbolization: The original program applies FFT to a large input vector. The symbolized version massively reduces the
-size of this vector to avoid an overly large output file. It additionally uses symbolization to replace one of the 
-input values with a value chosen out of a small, fixed set of values.
+size of this vector to avoid an overly large output file. It additionally symbolizes all of the values in the (smaller)
+input vector. Interestengly, the resulting program only contains one path. Apparently, FFT does not contain a branch
+that is directly or indirectly based on any of the input values. (DONE)
 
 File: fft.c
 Original provenience: DSP-Stone
