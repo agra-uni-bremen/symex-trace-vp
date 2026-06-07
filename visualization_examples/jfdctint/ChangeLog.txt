@@ -1,5 +1,6 @@
-Symbolization: We sadly will have to exclude this one, because it has absurdly long paths. I have not found a way to
-decrease the input size without breaking the functionality of the program.
+Symbolization: The original program uses a seed to initialize its input array. The symbolic version of this program
+symbolizes this seed. The resulting symbolic execution only finds a single path. Apparently, the algorithm does not
+contain any branch that is influenced by its input values.
 
 File: jfdctint.c
 Original provenience: SNU-RT Benchmark Suite for Worst Case Timing Analysis

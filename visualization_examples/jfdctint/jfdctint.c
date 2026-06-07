@@ -150,16 +150,12 @@ void jfdctint_init()
   /* Worst case settings */
   /* Set array to random values */
   seed = 1;
+  make_symbolic(&seed, sizeof(seed));
 
   _Pragma( "loopbound min 64 max 64" )
   for ( i = 0; i < 64; i++ ) {
     seed = ( ( seed * 133 ) + 81 ) % 65535;
-    if ( i = 32) {
-      // make_symbolic(&seed, sizeof(seed) );
-      jfdctint_data[ i ] = seed;
-    } else {
-      jfdctint_data[ i ] = seed;
-    }
+    jfdctint_data[ i ] = seed;
   }
 
 }
