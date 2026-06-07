@@ -1,6 +1,5 @@
-Symbolization: The original function applied the function to a large range of input floats. The symbolized version
-applies the function to a small range of input floats. The index of the chosen element is picked through symbolization.
-Due to state space problems we were not able to fully symbolize the float.
+Symbolization: The original function applied the function deg2rad to a large range of input floats. The symbolized
+version applies the function to a single, fully symbolized input float. (DONE)
 
 Original provenience: MiBench benchmark suite,
                       http://wwweb.eecs.umich.edu/mibench

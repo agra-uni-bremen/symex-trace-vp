@@ -76,7 +76,8 @@ int deg2rad_return( void )
 
 void _Pragma( "entrypoint" ) deg2rad_main( void )
 {
-  float f = guess_symbolic_unsigned_float();
+  float f = 0.0f;
+  make_symbolic(&f, sizeof(f));
   deg2rad(f);
 }
 
