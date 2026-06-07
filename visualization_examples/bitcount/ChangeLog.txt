@@ -1,6 +1,6 @@
 Symbolization: The original program generates a vector of random integer values and then applies a range of different
 bitcounting functions to each element of the array. The symbolized version reduces the size of the generated vector to 1
-and symbolizes this vector.
+and fully symbolizes the single element of this vector. (DONE)
 
 File: bitcnt_1.c
 Original provenience: 

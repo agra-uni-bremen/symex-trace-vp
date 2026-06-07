@@ -32,14 +32,13 @@
 
 #include "symex.h"
 
-#define N 16
-
+#define N 2
 
 /*
   Forward declaration of functions
 */
 
-void complex_updates_pin_down( int *pa, int *pb, int *pc, int *pd );
+void complex_updates_pin_down( float *pa, float *pb, float *pc, float *pd );
 void complex_updates_init( void );
 void complex_updates_main( void );
 int main( void );
@@ -49,8 +48,7 @@ int main( void );
   Declaration of global variables
 */
 
-// Changed float values to int because the solver takes too long for floats.
-int complex_updates_A[ 2 * N ], complex_updates_B[ 2 * N ],
+float complex_updates_A[ 2 * N ], complex_updates_B[ 2 * N ],
       complex_updates_C[ 2 * N ], complex_updates_D[ 2 * N ];
 
 
@@ -61,7 +59,7 @@ int complex_updates_A[ 2 * N ], complex_updates_B[ 2 * N ],
 void complex_updates_init( void )
 {
   int i;
-  volatile int x = 0;
+  volatile float x = 0;
 
   complex_updates_pin_down( &complex_updates_A[ 0 ], &complex_updates_B[ 0 ],
                             &complex_updates_C[ 0 ], &complex_updates_D[ 0 ] );
@@ -77,7 +75,7 @@ void complex_updates_init( void )
 }
 
 
-void complex_updates_pin_down( int *pa, int *pb, int *pc, int *pd )
+void complex_updates_pin_down( float *pa, float *pb, float *pc, float *pd )
 {
   register int i;
 
@@ -97,14 +95,14 @@ void complex_updates_pin_down( int *pa, int *pb, int *pc, int *pd )
 
 int complex_updates_return( void )
 {
-  int check_sum = 0;
+  float check_sum = 0;
   int i;
 
   _Pragma( "loopbound min 16 max 16" )
   for ( i = 0; i < N; i++ )
     check_sum += complex_updates_D[ i ];
 
-  return ( check_sum != 144 );
+  return ( check_sum != 144.0f );
 }
 
 
@@ -114,8 +112,8 @@ int complex_updates_return( void )
 
 void _Pragma( "entrypoint" ) complex_updates_main( void )
 {
-  register int *p_a = &complex_updates_A[ 0 ], *p_b = &complex_updates_B[ 0 ];
-  register int *p_c = &complex_updates_C[ 0 ], *p_d = &complex_updates_D[ 0 ];
+  register float *p_a = &complex_updates_A[ 0 ], *p_b = &complex_updates_B[ 0 ];
+  register float *p_c = &complex_updates_C[ 0 ], *p_d = &complex_updates_D[ 0 ];
   int i;
 
   _Pragma( "loopbound min 16 max 16" )

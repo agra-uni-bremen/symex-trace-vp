@@ -1,5 +1,6 @@
-Symbolization: The original program computed cosine values for a large range of input values. Completely symbolizing an
-input float leads to state space explosion. Instead we guess a value from a given small range of values.
+Symbolization: The original program computed cosine values for a large range of input values. The symbolized version
+applies the function to a single, fully symbolized float value. However, this leads to path explosion. We executed the
+symbolic execution for two minutes and then terminated it artificially. (DONE)
 
 Original provenience: MiBench benchmark suite,
                       http://wwweb.eecs.umich.edu/mibench

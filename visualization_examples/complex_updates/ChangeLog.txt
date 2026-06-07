@@ -1,7 +1,6 @@
 Symbolization: The original program creates a large array of float values and uses standard float operations to compute
-a result value from them. Symbolizing the float values directly leads to state explosion due to the complex handling of
-floating point values. I therefore chose to convert the values to int and symbolize them afterwards. Because there is no
-branch on the symbolic inputs, this collapses the state space to a single branch.
+a result value from them. We symbolized the floats directly. Doing so led to path explosion due to the complex handling 
+of floating point values. We let the program run for 2 minutes and then terminated it artificially. (DONE)
 
 File: complex_updates.c
 Original provenience: DSP-Stone

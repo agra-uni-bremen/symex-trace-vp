@@ -72,7 +72,8 @@ int cosf_return( void )
 
 void _Pragma( "entrypoint" ) cosf_main( void )
 {
-  float f = guess_symbolic_unsigned_float();
+  float f = 0.0f;
+  make_symbolic(&f, sizeof(f));
   cosf_solutions += basicmath___cosf(f);
 }
 

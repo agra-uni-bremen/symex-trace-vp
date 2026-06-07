@@ -1,6 +1,6 @@
 Symbolization: The original program created a small unsorted vector of values and then performed binary search on this
 vector without sorting it. I suppose this is a bug. I adjusted the vector so that it is sorted. The symbolization then
-guesses one of the values in this vector and tries to find it using binary search.
+guesses one of the values in this vector and tries to find it using binary search. (DONE)
 
 File: binarysearch.c
 Original provenience: Mälardalen benchmark suite,

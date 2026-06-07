@@ -1,5 +1,5 @@
 Symbolization: The original program created a large vector of integer values and then sorted this array. We reduced the
-size of the array to cut down execution time and then symbolized a single value within this array.
+size of the array to cut down execution time and then symbolized a single value within this array. (DONE)
 
 File: bsort.c
 Original provenience: Mälardalen benchmark suite,
