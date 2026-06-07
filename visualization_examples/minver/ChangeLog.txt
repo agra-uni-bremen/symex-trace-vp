@@ -1,5 +1,6 @@
-Symbolization: The original program takes a matrix as input. I tried to symbolize one field of this matrix. However,
-this only lead to path explosion.
+Symbolization: The original program takes a matrix as input. The symbolic execution symbolizes exactly one element of
+this matrix. The resulting symbolic execution runs into path explosion. We therefore let the program run for two minutes
+and then terminated it artificially. (DONE)
 
 File: minver.c
 Original provenience: SNU-RT Benchmark Suite for Worst Case Timing Analysis

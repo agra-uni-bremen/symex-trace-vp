@@ -203,9 +203,7 @@ void minver_init()
     _Pragma( "loopbound min 3 max 3" )
     for ( j = 0; j < 3; j++ ) {
       if (i == 2 && j == 2) {
-        int k = 0;
-        make_symbolic(&k, sizeof(k));
-        minver_a[ i ][ j ] = k;
+        make_symbolic(&(minver_a[i][j]), sizeof(minver_a[i][j]));
       } else {
         minver_a[ i ][ j ] += x;
       }
