@@ -35,6 +35,8 @@
 #endif
 
 #include <iostream>
+#include <thread>
+#include <future>
 #include <systemc>
 #include <filesystem>
 #include <systemc>
@@ -49,6 +51,7 @@
 #define TIMEBUDGET_ENV "SYMEX_TIMEBUDGET"
 #define ERR_EXIT_ENV "SYMEX_ERREXIT"
 #define DUMP_ENV "SYMEX_DUMPALL"
+#define LOOP_TIMEOUT_ENV "SYMEX_LOOP_TIMEOUT"
 
 static bool dump_all = false;
 static std::filesystem::path *testcase_path = nullptr;
@@ -193,6 +196,15 @@ explore_paths(int argc, char **argv)
 	clover::ExecutionContext &ctx = symbolic_context.ctx;
 	clover::Trace &tracer = symbolic_context.trace;
 
+	std::optional<std::chrono::steady_clock::time_point> loop_deadline;
+	if (char *timeout_str = getenv(LOOP_TIMEOUT_ENV)) {
+		errno = 0;
+		unsigned long seconds = strtoul(timeout_str, NULL, 10);
+		if (!seconds && errno)
+			throw std::system_error(errno, std::generic_category());
+		loop_deadline = std::chrono::steady_clock::now() + std::chrono::seconds(seconds);
+	}
+
 	bool new_path_exists = false;
 	do {
 		std::cout << std::endl << "################################" << std::endl << std::endl;
@@ -215,12 +227,40 @@ explore_paths(int argc, char **argv)
 		int ret;
 		if ((ret = sc_core::sc_elab_and_sim(argc, argv)))
 			return ret;
-		new_path_exists = setupNewValues(ctx, tracer);
-		std::cout << "</symex>" << std::endl;
+		if (loop_deadline) {
+			auto remaining = std::chrono::duration_cast<std::chrono::milliseconds>(
+				*loop_deadline - std::chrono::steady_clock::now());
+			if (remaining.count() <= 0) {
+				new_path_exists = false;
+			} else {
+				std::packaged_task<bool()> task([&]() {
+					return ctx.setupNewValues(tracer);
+				});
+				auto fut = task.get_future();
+				std::thread t(std::move(task));
+				auto start = std::chrono::steady_clock::now();
+				if (fut.wait_for(remaining) == std::future_status::timeout) {
+					t.detach();
+					new_path_exists = false;
+				} else {
+					solver_time += std::chrono::steady_clock::now() - start;
+					t.join();
+					new_path_exists = fut.get();
+				}
+			}
+		} else {
+			new_path_exists = setupNewValues(ctx, tracer);
+		}
 		++symolic_run_id;
 		runs_created_by_current_run = 0;
 		// if (dump_all && prev_error == errors_found)
 		// 	dump_input("path" + std::to_string(paths_found));
+		if (loop_deadline && std::chrono::steady_clock::now() >= *loop_deadline) {
+			std::cout << "Loop timeout reached, stopping exploration..." << std::endl;
+			std::cout << "</symex>" << std::endl;
+			break;
+		}
+		std::cout << "</symex>" << std::endl;
 	} while (new_path_exists);
 
 	sc_core::sc_report_handler::release();
