@@ -1,5 +1,5 @@
 Symbolization: The original program generates two prime numbers from a seed and then does some logical computations
-with those prime numbers. I attempted to symbolize the seed, however ran into too complicated path constraints.
+with those prime numbers. We symbolized the seed. (DONE)
 
 File: prime.c
 Original provenience: Mälardalen benchmark suite, 
