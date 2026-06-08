@@ -1,6 +1,6 @@
 Symbolization: The original program uses quicksort two sort two large input vectors. One vector is made up of strings,
 the other vector is made up of 3D vectors. I cut down the length of the two vectors massively and symbolized a single
-byte in each vector.
+byte in each vector. (DONE)
 
 File: quicksort.c
 Original provenience: MiBench benchmark suite,
