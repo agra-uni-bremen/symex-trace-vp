@@ -1,5 +1,5 @@
 Symbolization: The original program recursively computes Fibonacci for a given input. We symbolize the input but
-restrict this symbol to very small bounds (i.e. 0 to 6).
+restrict this symbol to very small bounds (i.e. 0 to 6). (DONE)
 
 File: recursion.c
 Original provenience: Mälardalen benchmark suite, www.mrtc.....

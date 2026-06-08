@@ -61,12 +61,14 @@ int recursion_return()
 
 void _Pragma( "entrypoint" ) recursion_main( void )
 {
-  int input = 0;
-  make_symbolic(&input, sizeof(input));
-  if (input < 0 || input > 6) {
+  int num_iterations = 0;
+  make_symbolic(&num_iterations, sizeof(num_iterations));
+  if (num_iterations < 0 || num_iterations > 8) {
     symex_exit();
   }
-  recursion_result = recursion_fib( input );
+  for (int i = 0; i < num_iterations; i++) {
+    recursion_fib( recursion_input );
+  }
 }
 
 int main( void )
