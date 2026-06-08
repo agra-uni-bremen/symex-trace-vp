@@ -75,33 +75,20 @@ long st_randomInteger()
 }
 
 
-void st_initialize_symbolic( float *array )
-{
-  register int i;
-
-  _Pragma( "loopbound min 5 max 5" )
-  for ( i = 0; i < 5; i++ )
-    if (i == 2) {
-      make_symbolic(&array[ i ], sizeof(array[ i ]));
-    } else {
-      array[ i ] = i + st_randomInteger();
-    }
-}
-
 void st_initialize( float *array )
 {
   register int i;
 
   _Pragma( "loopbound min 5 max 5" )
   for ( i = 0; i < 5; i++ )
-    array[ i ] = i + st_randomInteger();
+    make_symbolic(&array[ i ], sizeof(array[ i ]));
 }
 
 void st_init()
 {
   st_initSeed();
   st_initialize( st_arrayA );
-  st_initialize_symbolic( st_arrayB );
+  st_initialize( st_arrayB );
 }
 
 

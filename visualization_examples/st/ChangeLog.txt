@@ -1,6 +1,7 @@
-Symbolization: The original program statistical information for two large arrays and linear coefficients between the two
-arrays. The symbolization cuts the size of the arrays down and symbolizes one entry of one array. Sadly, the execution
-runs into path explosion issues.
+Symbolization: The original program statistical information for two large arrays and linear correlation coefficients
+between the two arrays. The symbolization cuts the size of the arrays down and symbolizes all entries of the arrays. The
+symbolic execution runs into path explosion issues. We let the symbolic execution run for two minutes and then terminate
+it artificially. (DONE)
 
 File: st.c
 Original provenience: Mälardalen benchmark suite, www.mrtc.....
