@@ -1,6 +1,6 @@
-Symbolization: The SHA example has a very large input. The symbolization cuts the input down to its first 100 bytes and
-symbolizes all these 100 bytes. The resulting trace only contains one path. Apparently, the SHA algorithm does not
-contain any conditional branch on a part of its input.
+Symbolization: The SHA example has a very large input. We cut this input down to its first 100 bytes and symbolize all
+these 100 bytes. Suprisingly, the resulting trace only contains one path. Apparently, the SHA algorithm does not contain
+any conditional branch based directly or indirectly on its input. (DONE)
 
 File: sha.c
 Original provenience: 
