@@ -1,5 +1,5 @@
 Symbolization: The original program applied rad2deg to a large range of floats. The symbolized version only applies it
-to a single, fully symbolic float.
+to a single, fully symbolic float. (DONE)
 
 Original provenience: MiBench benchmark suite,
                       http://wwweb.eecs.umich.edu/mibench
