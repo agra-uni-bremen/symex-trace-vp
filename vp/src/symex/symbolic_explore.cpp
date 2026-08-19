@@ -33,6 +33,11 @@
 #endif
 
 #include <clover/query_info.hpp>
+// std::max_element / std::accumulate were previously only reaching this file transitively through
+// the klee headers pulled in by query_info.hpp. Included explicitly so the branch-info aggregation
+// below does not depend on that.
+#include <algorithm>
+#include <numeric>
 #include <iostream>
 #include <systemc>
 #include <filesystem>
@@ -316,9 +321,24 @@ symbolic_explore(int argc, char **argv)
 			throw "unreachable";
 		}
 
+		// Two numbers because they answer two different questions. seconds_max is the worst single
+		// query at this branch - the pathological constraint. seconds_total is what the branch cost
+		// overall, which is what "where is solving time spent" actually asks: a branch queried 200
+		// times at 5ms each dominates one queried once at 50ms, and the max alone ranks those two
+		// backwards. The total cannot be reconstructed downstream from max and num_queries, so it
+		// has to be emitted here rather than derived by the converter.
 		auto& times = branch_info.query_solving_times_in_seconds;
 		auto max_seconds = *std::max_element(times.begin(), times.end());
-		std::cout << "\" seconds=\"" << std::dec << max_seconds;
+		auto total_seconds = std::accumulate(times.begin(), times.end(), 0.0f);
+
+		// Both names are explicit on purpose. There used to be a bare "seconds" attribute here
+		// holding the max, which read as "the time for this branch" and was routinely taken for the
+		// total. The older consumers still look for that name (symex-3d's process_trace.py and the
+		// Blender addon's xml_parser.py, both via .get(..., '0.0'), so they now see 0.0 rather than
+		// an error) - accepted deliberately, since that pipeline is being reworked and an ambiguous
+		// name is worse than a missing one.
+		std::cout << "\" seconds_max=\"" << std::dec << max_seconds;
+		std::cout << "\" seconds_total=\"" << std::dec << total_seconds;
 
 		auto& num_constraints = branch_info.num_constraints;
 		auto max_constraints = *std::max_element(num_constraints.begin(), num_constraints.end());
