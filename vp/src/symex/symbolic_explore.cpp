@@ -365,49 +365,68 @@ symbolic_explore(int argc, char **argv)
 
 	std::cout << "<branch-info>" << std::endl;
 	for (const auto& [branch_addr, branch_info] : info_on_branches) {
-		std::cout << std::hex << "<branch addr=\"" << branch_info.address << std::dec;
-		std::cout << "\" num_queries=\"" << branch_info.num_queries;
-		
-		if (branch_info.num_queries == 0) {
-			throw "unreachable";
+		auto& queries = branch_info.queries;
+
+		// An address only enters the map when a query is recorded against it, so an empty entry
+		// should be impossible - but emitting one would produce a branch that looks free rather
+		// than one that looks wrong, so refuse instead.
+		if (queries.empty()) {
+			throw "branch info with no queries";
 		}
 
-		// Two numbers because they answer two different questions. seconds_max is the worst single
-		// query at this branch - the pathological constraint. seconds_total is what the branch cost
-		// overall, which is what "where is solving time spent" actually asks: a branch queried 200
-		// times at 5ms each dominates one queried once at 50ms, and the max alone ranks those two
-		// backwards. The total cannot be reconstructed downstream from max and num_queries, so it
-		// has to be emitted here rather than derived by the converter.
-		auto& times = branch_info.query_solving_times_in_seconds;
-		auto max_seconds = *std::max_element(times.begin(), times.end());
-		auto total_seconds = std::accumulate(times.begin(), times.end(), 0.0f);
+		// The address comes from the map key: Branch_Info deliberately keeps no copy of it, since
+		// a second copy could only ever drift from the key.
+		std::cout << std::hex << "<branch addr=\"" << branch_addr << std::dec;
+		std::cout << "\" num_queries=\"" << queries.size();
 
-		// Both names are explicit on purpose. There used to be a bare "seconds" attribute here
-		// holding the max, which read as "the time for this branch" and was routinely taken for the
-		// total. The older consumers still look for that name (symex-3d's process_trace.py and the
-		// Blender addon's xml_parser.py, both via .get(..., '0.0'), so they now see 0.0 rather than
-		// an error) - accepted deliberately, since that pipeline is being reworked and an ambiguous
-		// name is worse than a missing one.
-		std::cout << "\" seconds_max=\"" << std::dec << max_seconds;
-		std::cout << "\" seconds_total=\"" << std::dec << total_seconds;
+		// These aggregates are DERIVED from the <query> children below, which are the authoritative
+		// record. They stay because they are what a human scanning the file wants and what every
+		// consumer would otherwise recompute first; if the two ever disagree, the children win.
+		//
+		// seconds carries both a max and a total because they answer different questions - the max
+		// is the one pathological query, the total is what the branch actually cost, and a branch
+		// queried 200 times at 5ms outranks one queried once at 50ms only on the total. The other
+		// four are complexity measures rather than costs, so only their max means anything.
+		auto max_by = [&queries](auto field) {
+			auto best = field(queries.front());
+			for (const auto& q : queries)
+				best = std::max(best, field(q));
+			return best;
+		};
+		float seconds_total = 0.0f;
+		for (const auto& q : queries)
+			seconds_total += q.seconds;
 
-		auto& num_constraints = branch_info.num_constraints;
-		auto max_constraints = *std::max_element(num_constraints.begin(), num_constraints.end());
-		std::cout << "\" constraints=\"" << std::dec << max_constraints;
+		std::cout << "\" seconds_max=\"" << max_by([](const Query_Info& q) { return q.seconds; });
+		std::cout << "\" seconds_total=\"" << seconds_total;
+		std::cout << "\" constraints=\"" << max_by([](const Query_Info& q) { return q.constraints; });
+		std::cout << "\" variables=\"" << max_by([](const Query_Info& q) { return q.variables; });
+		std::cout << "\" nodes=\"" << max_by([](const Query_Info& q) { return q.nodes; });
+		std::cout << "\" depth=\"" << max_by([](const Query_Info& q) { return q.depth; });
+		std::cout << "\">" << std::endl;
 
-		auto& num_variables = branch_info.num_variables;
-		auto max_variables = *std::max_element(num_variables.begin(), num_variables.end());
-		std::cout << "\" variables=\"" << std::dec << max_variables;
-	
-		auto& num_nodes = branch_info.num_nodes;
-		auto max_nodes = *std::max_element(num_nodes.begin(), num_nodes.end());
-		std::cout << "\" nodes=\"" << std::dec << max_nodes;
+		// One element per solver query, in the order the queries were issued (document order is the
+		// only thing that records that order - there is no explicit index). Kept per-query rather
+		// than aggregated away because every aggregate discards the distribution, and the
+		// distribution is what separates "this branch is uniformly slow" from "this branch has one
+		// pathological query among many fast ones". No max/total pair can express that difference,
+		// and it cannot be recovered afterwards without re-running the whole exploration - which is
+		// why it is emitted here even though nothing downstream consumes it yet.
+		for (const auto& q : queries) {
+			// run_id/step name the execution that FIRST reached this branch - the event the query
+			// is about - not the run the query may go on to create. step restarts each run, so the
+			// pair is the identity; neither half alone is.
+			std::cout << "  <query run_id=\"" << q.run_id;
+			std::cout << "\" step=\"" << q.step;
+			std::cout << "\" seconds=\"" << q.seconds;
+			std::cout << "\" constraints=\"" << q.constraints;
+			std::cout << "\" variables=\"" << q.variables;
+			std::cout << "\" nodes=\"" << q.nodes;
+			std::cout << "\" depth=\"" << q.depth;
+			std::cout << "\"></query>" << std::endl;
+		}
 
-		auto& depth = branch_info.depth;
-		auto max_depth = *std::max_element(depth.begin(), depth.end());
-		std::cout << "\" depth=\"" << std::dec << max_depth;
-		
-		std::cout << "\"></branch>" << std::endl;
+		std::cout << "</branch>" << std::endl;
 	}
 	std::cout << "</branch-info>" << std::endl;
 

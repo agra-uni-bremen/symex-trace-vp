@@ -299,8 +299,11 @@ struct ISS : public external_interrupt_target, public clint_interrupt_target, pu
     // };
 
     void track_and_trace_branch(bool cond, std::shared_ptr<clover::ConcolicValue> expr) {
+        // last_pc, not pc: pc has already been advanced past this instruction (and, for a taken
+        // branch, all the way to the target) by the time this runs, so only last_pc still names
+        // the branch itself. total_num_instr restarts each run, hence the run id alongside it.
         if (expr->symbolic.has_value())
-            tracer.add(cond, *expr->symbolic, last_pc);
+            tracer.add(cond, *expr->symbolic, last_pc, symolic_run_id, total_num_instr);
 			if (symolic_run_id >= symbolic_run_links.size()) {
 				symbolic_run_links.resize(symolic_run_id + 1);
 			}
