@@ -233,6 +233,23 @@ symbolic_behavior ISS::determine_sybmolic_behavior(int32_t rs1_id, int32_t rs2_i
 	return sb_error;
 }
 
+uint32_t ISS::concrete_value(RegFile::RegValue value){
+	return solver.getValue<uint32_t>(value->concrete);
+}
+
+unsigned ISS::access_width(const std::string& opcode_name){
+	if(opcode_name == "SB" || opcode_name == "LB" || opcode_name == "LBU"){
+		return 1;
+	}
+	if(opcode_name == "SH" || opcode_name == "LH" || opcode_name == "LHU"){
+		return 2;
+	}
+	// SW/LW and the word-sized atomics/float variants. Defaulting to 4 rather than 0 because every
+	// opcode that reaches the load/store emitters today is byte, half or word - a 0 would be read
+	// downstream as "nothing changed", which is worse than being wrong about a width.
+	return 4;
+}
+
 template<typename T1, typename T2, typename T3>
 void ISS::trace_instruction_2reg(const std::string& opcode_name, int32_t rs1_id, int32_t rs2_id, int32_t rd_id, RegFile::RegValue rs1, RegFile::RegValue rs2, RegFile::RegValue rd, RegFile::RegValue previous_rd){
 	exec_trace << "<instruction opcode=\"" << opcode_name << "\" ";
@@ -262,7 +279,18 @@ void ISS::trace_instruction_2reg(const std::string& opcode_name, int32_t rs1_id,
 	}else{
 		exec_trace << " C\" ";
 	}
-	symbolic_behavior behavior = determine_sybmolic_behavior(rs1_id, rs2_id, rd_id, 
+	// Concrete values, per execution. The register names above are static for a given pc, but these
+	// change every time the instruction runs - a loop body writes a different rd_value each
+	// iteration - so anything downstream must keep them per step rather than per instruction.
+	//
+	// Unsigned 32-bit decimal, matching how imm= is already emitted (a -32 immediate appears as
+	// 4294967264). Consumers wanting a signed reading reinterpret; the trace does not guess.
+	exec_trace << "rd_value=\"" << concrete_value(rd) << "\" ";
+	exec_trace << "rd_previous_value=\"" << concrete_value(previous_rd) << "\" ";
+	exec_trace << "rs1_value=\"" << concrete_value(rs1) << "\" ";
+	exec_trace << "rs2_value=\"" << concrete_value(rs2) << "\" ";
+
+	symbolic_behavior behavior = determine_sybmolic_behavior(rs1_id, rs2_id, rd_id,
 									rs1_symbolic, rs2_symbolic, rd_symbolic, rd_was_symbolic);
 
 	exec_trace << "beh=\"" << beh_names[behavior] << "\" ";
@@ -296,8 +324,13 @@ void ISS::trace_instruction_1reg_imm(const std::string& opcode_name, int32_t rs1
 
 	exec_trace << "imm=\"" << solver.getValue<uint32_t> (imm->concrete) << "\" ";
 
+	// Per-execution values - see trace_instruction_2reg for why these must not be hoisted to the
+	// instruction level. No rs2_value here: this form has no second source register.
+	exec_trace << "rd_value=\"" << concrete_value(rd) << "\" ";
+	exec_trace << "rd_previous_value=\"" << concrete_value(previous_rd) << "\" ";
+	exec_trace << "rs1_value=\"" << concrete_value(rs1) << "\" ";
 
-	symbolic_behavior behavior = determine_sybmolic_behavior(rs1_id, -1, rd_id, 
+	symbolic_behavior behavior = determine_sybmolic_behavior(rs1_id, -1, rd_id,
 									rs1_symbolic, false, rd_symbolic, rd_was_symbolic);
 	exec_trace << "beh=\"" << beh_names[behavior] << "\" ";
 
@@ -333,8 +366,13 @@ void ISS::trace_branch(const std::string& opcode_name, int32_t rs1_id, int32_t r
 		exec_trace << "cond=\"0\" ";
 	}
 
+	// Already a plain uint32_t here, unlike the load/store address - correct as it stands.
 	exec_trace << "target=\"" << std::hex << target << std::dec << "\" ";
 
+	// The two values the branch actually compared. A branch writes no register, so there is no
+	// rd_value; these are what made cond= come out the way it did.
+	exec_trace << "rs1_value=\"" << concrete_value(rs1) << "\" ";
+	exec_trace << "rs2_value=\"" << concrete_value(rs2) << "\" ";
 
 	symbolic_behavior behavior = sb_none;
 	if(rs1_symbolic || rs2_symbolic){
@@ -364,13 +402,24 @@ void ISS::trace_store(const std::string& opcode_name, int32_t rs1_id, int32_t rs
 	exec_trace << "imm=\"" << solver.getValue<uint32_t> (imm->concrete) << "\" ";
 
 	exec_trace << "rs2=\"" << regnames[rs2_id];
-	if(rs1->symbolic.has_value()){
+	// rs2_symbolic, not rs1's: this read rs1 until now, so every store reported rs2's symbolic
+	// state as whatever rs1 happened to be.
+	if(rs2_symbolic){
 	 	exec_trace << " S\" ";
 	}else{
 		exec_trace << " C\" ";
 	}
 
-	exec_trace << "target=\"" << std::hex << address << std::dec << "\" ";
+	// The guest address, in hex. This used to stream the RegValue itself - a shared_ptr - so it
+	// printed a host heap pointer (12 hex digits, different every run) rather than anything about
+	// the program under test.
+	exec_trace << "target=\"" << std::hex << concrete_value(address) << std::dec << "\" ";
+
+	// What the store actually put in memory, and how much of it changed. rs2 is the source
+	// register for a store, so its concrete value IS the written value; width comes from the
+	// opcode because SB/SH/SW differ only in how many bytes they touch.
+	exec_trace << "mem_value=\"" << concrete_value(rs2) << "\" ";
+	exec_trace << "mem_width=\"" << access_width(opcode_name) << "\" ";
 
 	symbolic_behavior behavior = sb_none;
 	if(rs2_symbolic){
@@ -408,7 +457,16 @@ void ISS::trace_load(const std::string& opcode_name, int32_t rs1_id, int32_t rd_
 		exec_trace << " C\" ";
 	}
 
-	exec_trace << "target=\"" << std::hex << address << std::dec << "\" ";
+	// Guest address, in hex - same shared_ptr bug as trace_store had, same fix.
+	exec_trace << "target=\"" << std::hex << concrete_value(address) << std::dec << "\" ";
+
+	// A load changes a register, not memory: rd_value is what came back from the address above,
+	// and mem_width says how many bytes were read to produce it. There is no mem_value, because
+	// nothing in memory changed.
+	exec_trace << "rd_value=\"" << concrete_value(rd) << "\" ";
+	exec_trace << "rd_previous_value=\"" << concrete_value(previous_rd) << "\" ";
+	exec_trace << "rs1_value=\"" << concrete_value(rs1) << "\" ";
+	exec_trace << "mem_width=\"" << access_width(opcode_name) << "\" ";
 
 	symbolic_behavior behavior = sb_none;
 	if(rd_symbolic){
@@ -763,7 +821,10 @@ void ISS::exec_step() {
 		case Opcode::LB: {
 			auto addr = regs[RS1]->add(I_IMM);
 			regs.write(RD, mem->load_byte(addr));
-			trace_load("SB", RS1, RD, previous_rs1, regs[RD], I_IMM, addr, previous_rd);
+			// "LB", not "SB": this reported every byte load under a store's opcode name, and the
+			// converter classifies by that name (SB is in its STORE_OPCODES), so LB executions
+			// were being counted as stores all the way downstream.
+			trace_load("LB", RS1, RD, previous_rs1, regs[RD], I_IMM, addr, previous_rd);
 		} break;
 
 		case Opcode::LH: {

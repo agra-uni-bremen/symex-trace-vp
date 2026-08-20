@@ -253,8 +253,23 @@ struct ISS : public external_interrupt_target, public clint_interrupt_target, pu
 
 	ISS(SymbolicContext &_ctx, uint32_t hart_id, bool use_E_base_isa = false);
 
-	symbolic_behavior determine_sybmolic_behavior(int32_t rs1_id, int32_t rs2_id, int32_t rd_id, 
+	symbolic_behavior determine_sybmolic_behavior(int32_t rs1_id, int32_t rs2_id, int32_t rd_id,
 								bool rs1_symbolic, bool rs2_symbolic, bool rd_symbolic, bool rd_was_symbolic);
+
+	// The concrete side of a concolic value. Always defined, symbolic or not: concolic execution
+	// carries a concrete value alongside any symbolic expression, and the S/C suffix already on
+	// each register name is what says which. Deliberately concrete-only - the symbolic side is a
+	// klee expression tree, and exporting that is a separate and much larger question.
+	//
+	// Exists mostly so the trace emitters below cannot repeat the mistake target= used to make:
+	// streaming a RegValue directly prints the shared_ptr, i.e. a host heap address, which looks
+	// plausible in the output and is entirely meaningless.
+	uint32_t concrete_value(RegFile::RegValue value);
+
+	// Bytes touched by a load/store, derived from the opcode name the emitter was given rather than
+	// passed in, so no call site has to change. A memory view needs this: "wrote 0x2a at 0x1f0" is
+	// ambiguous about how much of memory actually changed.
+	static unsigned access_width(const std::string& opcode_name);
 	template<typename T1, typename T2, typename T3>
 	
 	void trace_instruction_2reg(const std::string& opcode_name, int32_t rs1_id, int32_t rs2_id, int32_t rd_id, RegFile::RegValue rs1, RegFile::RegValue rs2, RegFile::RegValue rd, RegFile::RegValue previous_rd);
