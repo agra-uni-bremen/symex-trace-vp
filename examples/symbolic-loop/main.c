@@ -18,9 +18,11 @@ extern void make_symbolic(void *, size_t);
  * seconds_total differ from seconds_max.
  *
  * NBITS controls the blowup: the loop admits 2^NBITS paths. Four is enough to
- * demonstrate the effect while still finishing in a few seconds, which matters
- * because SYMEX_TIMEBUDGET cannot be used to bound a run whose trace you intend
- * to load (its SIGALRM handler _Exit()s before the closing tags are written).
+ * demonstrate the effect while still finishing well under a second.
+ *
+ * This example produces NO unsatisfiable queries - every gap's first negation
+ * succeeds - so it is the wrong fixture for anything measuring solver time that
+ * bought nothing. See examples/symbolic-infeasible for that.
  */
 #define NBITS 4
 

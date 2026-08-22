@@ -70,9 +70,9 @@
 <step pc="101e8" step="32"><instruction opcode="LUI" rd="a5  (x15) C" imm="33685504" beh="none" ></instruction></step>
 <step pc="101ec" step="33"><instruction opcode="ADDI" rd="a5  (x15) C" rs1="a5  (x15) C" imm="264" rd_value="33685768" rd_previous_value="33685504" rs1_value="33685504" beh="none" ></instruction>
 </step>
-<step pc="101f0" step="34"><load opcode="LW" rs1="a5  (x15) C" imm="0" rd="a5  (x15) S" target="2020108" rd_value="29" rd_previous_value="33685768" rs1_value="33685768" mem_width="4" beh="create" ></load>
+<step pc="101f0" step="34"><load opcode="LW" rs1="a5  (x15) C" imm="0" rd="a5  (x15) S" target="2020108" rd_value="25" rd_previous_value="33685768" rs1_value="33685768" mem_width="4" beh="create" ></load>
 </step>
-<step pc="101f4" step="35"><instruction opcode="ADDI" rd="a0  (x10) S" rs1="a5  (x15) S" imm="0" rd_value="29" rd_previous_value="23" rs1_value="29" beh="create" ></instruction>
+<step pc="101f4" step="35"><instruction opcode="ADDI" rd="a0  (x10) S" rs1="a5  (x15) S" imm="0" rd_value="25" rd_previous_value="23" rs1_value="25" beh="create" ></instruction>
 </step>
 <step pc="101f8" step="36"><load opcode="LW" rs1="sp   (x2) C" imm="12" rd="ra   (x1) C" target="1ffffd8" rd_value="65872" rd_previous_value="65872" rs1_value="33554380" mem_width="4" beh="none" ></load>
 </step>
@@ -82,23 +82,23 @@
 </step>
 <step pc="10204" step="39"><jump target="10150" link="zero (x0)" link-address=" 10208" beh="none" ></jump>
 </step>
-<step pc="10150" step="40"><store opcode="SW" rs1="s0/fp(x8) C" imm="4294967276" rs2="a0  (x10) S" target="1ffffe8" mem_value="29" mem_width="4" beh="create" ></store>
+<step pc="10150" step="40"><store opcode="SW" rs1="s0/fp(x8) C" imm="4294967276" rs2="a0  (x10) S" target="1ffffe8" mem_value="25" mem_width="4" beh="create" ></store>
 </step>
-<step pc="10154" step="41"><load opcode="LW" rs1="s0/fp(x8) C" imm="4294967276" rd="a4  (x14) S" target="1ffffe8" rd_value="29" rd_previous_value="42" rs1_value="33554428" mem_width="4" beh="create" ></load>
+<step pc="10154" step="41"><load opcode="LW" rs1="s0/fp(x8) C" imm="4294967276" rd="a4  (x14) S" target="1ffffe8" rd_value="25" rd_previous_value="42" rs1_value="33554428" mem_width="4" beh="create" ></load>
 </step>
-<step pc="10158" step="42"><instruction opcode="ADDI" rd="a5  (x15) C" rs1="zero (x0) C" imm="23" rd_value="23" rd_previous_value="29" rs1_value="0" beh="destroy" ></instruction>
+<step pc="10158" step="42"><instruction opcode="ADDI" rd="a5  (x15) C" rs1="zero (x0) C" imm="23" rd_value="23" rd_previous_value="25" rs1_value="0" beh="destroy" ></instruction>
 </step>
-<step pc="1015c" step="43"><branch opcode="BGEU" rs1="a5  (x15) C" rs2="a4  (x14) S" cond="0" target="10160" rs1_value="23" rs2_value="29" beh="special" ></branch>
+<step pc="1015c" step="43"><branch opcode="BGEU" rs1="a5  (x15) C" rs2="a4  (x14) S" cond="0" target="10160" rs1_value="23" rs2_value="25" beh="special" ></branch>
 </step>
-<step pc="10160" step="44"><load opcode="LW" rs1="s0/fp(x8) C" imm="4294967276" rd="a4  (x14) S" target="1ffffe8" rd_value="29" rd_previous_value="29" rs1_value="33554428" mem_width="4" beh="overwrite" ></load>
+<step pc="10160" step="44"><load opcode="LW" rs1="s0/fp(x8) C" imm="4294967276" rd="a4  (x14) S" target="1ffffe8" rd_value="25" rd_previous_value="25" rs1_value="33554428" mem_width="4" beh="overwrite" ></load>
 </step>
 <step pc="10164" step="45"><instruction opcode="ADDI" rd="a5  (x15) C" rs1="zero (x0) C" imm="41" rd_value="41" rd_previous_value="23" rs1_value="0" beh="none" ></instruction>
 </step>
-<step pc="10168" step="46"><branch opcode="BGEU" rs1="a5  (x15) C" rs2="a4  (x14) S" cond="1" target="10174" rs1_value="41" rs2_value="29" beh="special" ></branch>
+<step pc="10168" step="46"><branch opcode="BGEU" rs1="a5  (x15) C" rs2="a4  (x14) S" cond="1" target="10174" rs1_value="41" rs2_value="25" beh="special" ></branch>
 </step>
 <step pc="10174" step="47"><instruction opcode="ADDI" rd="a5  (x15) C" rs1="zero (x0) C" imm="0" rd_value="0" rd_previous_value="41" rs1_value="0" beh="none" ></instruction>
 </step>
-<step pc="10178" step="48"><instruction opcode="ADDI" rd="a0  (x10) C" rs1="a5  (x15) C" imm="0" rd_value="0" rd_previous_value="29" rs1_value="0" beh="destroy" ></instruction>
+<step pc="10178" step="48"><instruction opcode="ADDI" rd="a0  (x10) C" rs1="a5  (x15) C" imm="0" rd_value="0" rd_previous_value="25" rs1_value="0" beh="destroy" ></instruction>
 </step>
 <step pc="1017c" step="49"><load opcode="LW" rs1="sp   (x2) C" imm="28" rd="ra   (x1) C" target="1fffff8" rd_value="65688" rd_previous_value="65872" rs1_value="33554396" mem_width="4" beh="none" ></load>
 </step>
@@ -136,7 +136,7 @@
 </step>
 <step pc="100b4" step="66"><branch opcode="BEQ" rs1="a5  (x15) C" rs2="zero (x0) C" cond="0" target="100b8" rs1_value="1" rs2_value="0" beh="none" ></branch>
 </step>
-<step pc="100b8" step="67"><load opcode="LW" rs1="s0/fp(x8) C" imm="4294967260" rd="a4  (x14) C" target="1ffffc8" rd_value="1" rd_previous_value="29" rs1_value="33554412" mem_width="4" beh="destroy" ></load>
+<step pc="100b8" step="67"><load opcode="LW" rs1="s0/fp(x8) C" imm="4294967260" rd="a4  (x14) C" target="1ffffc8" rd_value="1" rd_previous_value="25" rs1_value="33554412" mem_width="4" beh="destroy" ></load>
 </step>
 <step pc="100bc" step="68"><instruction opcode="ADDI" rd="a5  (x15) C" rs1="zero (x0) C" imm="1" rd_value="1" rd_previous_value="1" rs1_value="0" beh="none" ></instruction>
 </step>
@@ -361,7 +361,7 @@ num-instr = 60
 Unique paths found: 2
 Solver Time: 0 seconds
 Errors found: 1
-Testcase directory: "/tmp/clover_testsYgBYzt"
+Testcase directory: "/tmp/clover_testsgL3O63"
 <timelines>
 <run id="0" >
 <branch pc="10160" step="43" hash="1051306176"></branch>
@@ -372,15 +372,19 @@ Testcase directory: "/tmp/clover_testsYgBYzt"
 <run id="1" >
 <branch pc="1016c" step="43" hash="1051306176"></branch>
 <branch pc="100c8" step="52" hash="1945045203"></branch>
-<branch pc="40" step="33" hash="24"></branch>
+<branch pc="40" step="145" hash="136"></branch>
 </run>
 </timelines>
+<budget mechanism="none" limit_seconds="0" exhausted="true" seed="42" total_seconds="0.307304" runs="2">
+  <run id="0" sim_start="1.2078e-05" sim_end="0.00535292" solver_end="0.0526735"></run>
+  <run id="1" sim_start="0.0528315" sim_end="0.0560034" solver_end="0.307304"></run>
+</budget>
 <branch-info>
-<branch addr="1015c" num_queries="1" seconds_max="0.0200612" seconds_total="0.0200612" constraints="0" variables="1" nodes="78" depth="16">
-  <query run_id="0" step="43" seconds="0.0200612" constraints="0" variables="1" nodes="78" depth="16"></query>
+<branch addr="1015c" num_queries="1" seconds_max="0.0472801" seconds_total="0.0472801" constraints="0" variables="1" nodes="78" depth="16">
+  <query run_id="0" step="43" issued_in_run="0" sat="true" seconds="0.0472801" constraints="0" variables="1" nodes="78" depth="16"></query>
 </branch>
-<branch addr="10168" num_queries="1" seconds_max="0.095519" seconds_total="0.095519" constraints="1" variables="1" nodes="154" depth="16">
-  <query run_id="0" step="46" seconds="0.095519" constraints="1" variables="1" nodes="154" depth="16"></query>
+<branch addr="10168" num_queries="1" seconds_max="0.251252" seconds_total="0.251252" constraints="1" variables="1" nodes="154" depth="16">
+  <query run_id="0" step="46" issued_in_run="1" sat="false" seconds="0.251252" constraints="1" variables="1" nodes="154" depth="16"></query>
 </branch>
 </branch-info>
 </trace>
