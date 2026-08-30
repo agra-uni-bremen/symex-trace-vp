@@ -443,26 +443,37 @@ symbolic_explore(int argc, char **argv)
 	//std::cout << "<test-results>" << std::endl;
 	//std::cout << "</test-results>" << std::endl;
 
+	/* Every branch each run could have taken the other way, in execution order. A consumer
+	 * reconstructs the fork tree from these: two runs share a prefix of identical entries and the
+	 * first one that differs is where the later run diverged. The pc is the branch's TARGET (it is
+	 * read after the pc has advanced), which is what distinguishes the two directions of the same
+	 * branch - their hashes are equal, because the hash identifies the branch, not the direction.
+	 *
+	 * symbolic_run_links is a vector of vectors and is indexed by run id, so both bounds are its
+	 * own. An earlier version walked a fixed 0..29 range with no size check at all, which is an
+	 * out-of-bounds std::vector::operator[] twice over - past the end of a run's link list, and
+	 * past the end of the outer vector for any run that recorded no links. It printed whatever it
+	 * found, guarded only by a pc plausibility window, so uninitialised memory reached the trace as
+	 * <branch> elements: observed pc 0x4fbc8e0 with step 103211274907176 in a program whose text
+	 * ends below 0x10300. Two of those got as far as a consumer's JSON, where the step did not fit
+	 * a 32-bit integer and the file failed to parse at all. The window is gone with the overrun;
+	 * a real branch is now never truncated by it either. */
 	std::cout << "<timelines>" << std::endl;
 	for (uint32_t run = 0; run < paths_found; run++)
 	{
 		std::cout << "<run id=\"" << run << "\" >"<< std::endl;
-		for (size_t i = 0; i < 30; i++)//TODO probably use a dynamic list
-		{
-			uint32_t b_pc = symbolic_run_links[run][i].pc;
-			uint64_t b_step = symbolic_run_links[run][i].step;
-			uint64_t b_hash = symbolic_run_links[run][i].hash;
-			if(b_pc<=0 || b_pc > 1000000000){
-				break;
+		if (run < symbolic_run_links.size()) {
+			for (const SymbolicLink &link : symbolic_run_links[run])
+			{
+				std::cout << std::hex << "<branch pc=\"";
+				std::cout << link.pc << std::dec;
+				std::cout << "\" step=\"";
+				std::cout << link.step;
+				std::cout << "\" hash=\"";
+				std::cout << link.hash << "\"></branch>" << std::endl;
 			}
-			std::cout << std::hex << "<branch pc=\"";
-			std::cout << b_pc << std::dec;
-			std::cout << "\" step=\"";
-			std::cout << b_step; 
-			std::cout << "\" hash=\"";
-			std::cout << b_hash << "\"></branch>" << std::endl;
 		}
-		
+
 		std::cout << "</run>" << std::endl;
 	}
 	

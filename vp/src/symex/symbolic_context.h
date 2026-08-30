@@ -43,5 +43,4 @@ extern uint32_t symolic_run_id;
 
 extern std::vector<std::vector<SymbolicLink>> symbolic_run_links;
 extern uint32_t runs_created_by_current_run;
-extern uint32_t symbolic_run_links_to_parent[30][2];
 #endif

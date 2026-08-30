@@ -317,13 +317,22 @@ struct ISS : public external_interrupt_target, public clint_interrupt_target, pu
         // last_pc, not pc: pc has already been advanced past this instruction (and, for a taken
         // branch, all the way to the target) by the time this runs, so only last_pc still names
         // the branch itself. total_num_instr restarts each run, hence the run id alongside it.
-        if (expr->symbolic.has_value())
+        // Braced, and the braces are the fix. Without them only tracer.add was guarded and the
+        // three statements below ran for EVERY branch, concrete ones included - they are indented
+        // as though they were inside the conditional, which is how it went unnoticed. A concrete
+        // branch has no other outcome to explore, so recording one produces a <timelines> entry
+        // claiming the run could have forked where no input could ever have sent it elsewhere.
+        // Measured on a program whose only loop runs a constant number of times: eight such
+        // entries per run, all at the same concrete loop condition, and a consumer counting
+        // unexplored forks reported 36 of them in a seven-path trace.
+        if (expr->symbolic.has_value()) {
             tracer.add(cond, *expr->symbolic, last_pc, symolic_run_id, total_num_instr);
-			if (symolic_run_id >= symbolic_run_links.size()) {
-				symbolic_run_links.resize(symolic_run_id + 1);
-			}
-			symbolic_run_links[symolic_run_id].push_back({pc, total_num_instr, instruction_hash});
-			runs_created_by_current_run++;
+            if (symolic_run_id >= symbolic_run_links.size()) {
+                symbolic_run_links.resize(symolic_run_id + 1);
+            }
+            symbolic_run_links[symolic_run_id].push_back({pc, total_num_instr, instruction_hash});
+            runs_created_by_current_run++;
+        }
 			//printf("\n\ntrack branch \n%x, %d, %d, %d\n", pc, total_num_instr,instruction_hash, runs_created_by_current_run);
     };
 
